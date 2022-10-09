@@ -4,29 +4,33 @@ const { DataTypes } = require("sequelize");
 const DB = require("../config/db.config");
 
 /***********************************************/
-/** DEFINITION DU MODELE USER */
-const User = DB.define(
-  "User",
+/** DEFINITION DU MODELE COCKTAIL */
+const Cocktail = DB.define(
+  "Cocktail",
   {
     id: {
       type: DataTypes.INTEGER(10),
       primaryKey: true,
       autoIncrement: true,
     },
-    username: {
-      type: DataTypes.STRING(100),
+    user_id: {
+      type: DataTypes.STRING(10),
       allowNull: false,
-      unique: true,
     },
-    email: {
-      type: DataTypes.STRING,
-      validate: {
-        isEmail: true, // Ici une valdation de données
-      },
+    nom: {
+      type: DataTypes.STRING(100),
+      defaultValue: "",
+      allowNull: false,
     },
-    password: {
-      type: DataTypes.STRING(64),
-      is: /^[0-9a-f]{64}$/i, // ici une contrainte debut a la fin entre 0-9 et a-f et longeur 64 caracteres
+    description: {
+      type: DataTypes.TEXT,
+      defaultValue: "",
+      allowNull: false,
+    },
+    recette: {
+      type: DataTypes.TEXT,
+      defaultValue: "",
+      allowNull: false,
     },
   },
   { paranoid: true } // ici pour faire du soft delete
@@ -34,8 +38,9 @@ const User = DB.define(
 
 /*************************************/
 /** SYNCHRONISATION DES MODELES */
-// User.sync();
-//User.sync({ force: true });
-// User.sync({ alter: true });
+//Cocktail.sync();
+Cocktail.sync({ force: true });
 
-module.exports = User;
+// Cocktail.sync({ alter: true });
+
+module.exports = Cocktail;
