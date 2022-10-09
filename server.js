@@ -12,7 +12,14 @@ let DB = require("./config/db.config");
 /** INITIALISATION DE L'API */
 const app = express();
 
-app.use(cors()); // parse requests of content-type - application/json
+app.use(
+  cors({
+    origin: "http://localhost:8081",
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+    allowedHeaders:
+      "Origin, X-Requested-With, x-access-token, role, Content, Accept, Content-Type, Authorization ",
+  })
+); // parse requests of content-type - application/json
 app.use(express.json()); // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
@@ -40,10 +47,18 @@ app.get("*", (req, res) => {
   res.status(501).send("server.js send : Tu cherches quoi ?");
 });
 
+app.use((error, req, res, next) => {
+  console.log("je suis dans le middleware");
+  console.log(error);
+  return res
+    .status(error.statusCode || 500)
+    .json({ message: error.message, error: error });
+});
 /*****************************************/
 /** START SERVEUR AVEC TEST DB*/
 
-DB.authenticate()
+DB.sequelize
+  .authenticate()
   .then(() => console.log("Database connection is ok"))
 
   .then(() => {

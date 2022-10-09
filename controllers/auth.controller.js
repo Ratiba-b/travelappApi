@@ -1,89 +1,53 @@
-const db = require("../models");
-const config = require("../config/auth.config");
-const User = db.user;
-const Role = db.role;
-const Travel = db.travel;
+/**********************************************/
+/** IMPORT DES MODULES */
+const express = require("express");
+const jwt = require("jsonwebtoken");
 
-const Op = db.Sequelize.Op;
+const DB = require("../config/db.config");
+const User = DB.User;
 
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
+/***********************************************/
+/** ROUTAGE DE LA RESSOURCE AUTH */
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
 
-exports.signup = (user) => {
-  // Save User to Database
-  return User.create({
-    username: user.username,
-    email: user.email,
-    password: bcrypt.hashSync(user.password, 8),
-  })
-    .then((user) => {
-      // if (req.body.roles) {
-      //   Role.findAll({
-      //     where: {
-      //       name: {
-      //         [Op.or]: req.body.roles,
-      //       },
-      //     },
-      //   }).then((roles) => {
-      //     user.setRoles(roles).then(() => {
-      //       res.send({ message: "User was registered successfully!" });
-      //     });
-      //   });
-      // } else {
-      //   // user role = 1
-      //   user.setRoles([1]).then(() => {
-      //     res.send({ message: "User was registered successfully!" });
-      //   });
-      // }
-      console.log(">> Created User: " + JSON.stringify(user, null, 4));
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
-    });
-};
+  // validation des donnees recues
+  if (!email || !password) {
+    return res.status(400).json({ message: "invalid email or password" });
+  }
 
-exports.signin = (req, res) => {
-  User.findOne({
-    where: {
-      username: req.body.username,
-    },
-  })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
+  try {
+    //verification si le user existe
+    let user = await User.findOne({ where: { email: email }, raw: true });
+    if (user === null) {
+      return res.status(401).json({ message: "This account does not exist" });
+    }
 
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
+    // verification du mot de passe user
 
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!",
-        });
-      }
+    let test = await User.checkPassword(password, user.password);
+    if (!test) {
+      return res.status(401).json({ message: "Wrong password" });
+    }
 
-      var token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 86400, // 24 hours
-      });
+    // GENERATION DU TOKEN
+    const token = jwt.sign(
+      {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_DURING }
+    );
 
-      var authorities = [];
-      user.getRoles().then((roles) => {
-        for (let i = 0; i < roles.length; i++) {
-          authorities.push("ROLE_" + roles[i].name.toUpperCase());
-        }
-        res.status(200).send({
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          roles: authorities,
-          accessToken: token,
-        });
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
-    });
+    return res.json({ access_token: token });
+  } catch (err) {
+    if (err.name === "SequelizeDatabaseError") {
+      return res.status(500).json({ message: "Database error", error: err });
+    }
+    return res
+      .status(500)
+      .json({ message: "login process failed", error: err });
+  }
 };
