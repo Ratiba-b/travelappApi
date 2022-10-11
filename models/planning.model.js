@@ -1,18 +1,34 @@
-module.exports = (sequelize, Sequelize) => {
-  const Planning = sequelize.define("planning", {
+/***********************************************/
+/** IMPORT DES MODULES */
+const { DataTypes } = require("sequelize");
+
+module.exports = (sequelize) => {
+  return (Planning = sequelize.define("Planning", {
+    id: {
+      type: DataTypes.INTEGER(10),
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    user_id: {
+      type: DataTypes.INTEGER(10),
+      allowNull: false,
+    },
+    travel_id: {
+      type: DataTypes.INTEGER(10),
+      allowNull: false,
+    },
     title: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING(100),
     },
 
     event: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING(100),
     },
     start: {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
     },
     end: {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
     },
-  });
-  return Planning;
+  }));
 };

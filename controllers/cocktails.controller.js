@@ -60,7 +60,7 @@ exports.addCocktail = async (req, res) => {
     if (cocktail !== null) {
       return res
         .status(409)
-        .json({ message: `The user ${nom} already exists` });
+        .json({ message: `The cocktail ${nom} already exists` });
     }
 
     //creation du cocktail
@@ -118,7 +118,7 @@ exports.untrashCocktail = (req, res) => {
 exports.trashCocktail = (req, res) => {
   let cocktailId = parseInt(req.params.id);
 
-  //VERIFICATIO? SI LE CHAMP ID EST PRESENT ET COHERENT
+  //VERIFICATIOn SI LE CHAMP ID EST PRESENT ET COHERENT
   if (!cocktailId) {
     res.status(400).json({ message: "Missing parameter" });
   }

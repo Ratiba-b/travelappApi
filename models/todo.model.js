@@ -1,8 +1,22 @@
-module.exports = (sequelize, Sequelize) => {
-  const Todo = sequelize.define("todo", {
-    task: {
-      type: Sequelize.STRING,
+/***********************************************/
+/** IMPORT DES MODULES */
+const { DataTypes } = require("sequelize");
+
+module.exports = (sequelize) => {
+  return (Todo = sequelize.define("Todo", {
+    id: {
+      type: DataTypes.INTEGER(10),
+      primaryKey: true,
+      autoIncrement: true,
     },
-  });
-  return Todo;
+
+    travel_id: {
+      type: DataTypes.INTEGER(10),
+      allowNull: false,
+    },
+
+    task: {
+      type: DataTypes.STRING(100),
+    },
+  }));
 };
