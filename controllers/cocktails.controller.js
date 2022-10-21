@@ -136,7 +136,7 @@ exports.trashCocktail = (req, res) => {
 exports.deleteCocktail = (req, res) => {
   let cocktailId = parseInt(req.params.id);
 
-  //VERIFICATIO? SI LE CHAMP ID EST PRESENT ET COHERENT
+  //VERIFICATION SI LE CHAMP ID EST PRESENT ET COHERENT
   if (!cocktailId) {
     res.status(400).json({ message: "Missing parameter" });
   }

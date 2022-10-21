@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const DB = require("../config/db.config");
 const User = DB.User;
+const ROLES = DB.ROLES;
 
 /***********************************************/
 /** ROUTAGE DE LA RESSOURCE AUTH */

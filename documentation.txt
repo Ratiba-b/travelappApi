@@ -1,0 +1,50 @@
+Authentification: 
+
+config/db.config 
+=> gere la connexion avec la BDD via sequelize (bdd SQL)
+=> gere les relation entre les différente tables 
+=> sync () permet de mettre a jour la bdd si besoin 
+=> roles des différents utilisateurs dispo dans tableau ROLES 
+
+models 
+=> dossier contenant tous les modeles de me tables via sequelize 
+
+(test)Middlewares - authentication & authorisation
+
+=> utilisation de jswonwebtoken 
+=> verification des données envoyer depuis le body 
+  => email et mdp correctes 
+  => user existant ou non 
+  => verification du role envoyé depuis le body 
+=> si tout est ok next pour authentification 
+
+=> authentification 
+    => Verification du token 
+    => Verification du role 
+    next pour acceder a la requete en fonction du role de l'utilisateur indiqué dans le token a sa connexion 
+
+(test)Middlewares index exporte tous les autres middlewares présents dans le dossier 
+
+(test)controllers 
+ => logique pour s'identifier quand la bonne route est utilisée 
+    => verification: 
+        - user existant 
+        - mdp passe correct
+        - generation d'un token 
+
+ => creation d'un nouvel utilisateur en BDD 
+    => verification si tout est ok: 
+        - champs remplis
+        - bon mdp
+        - si l'utilisateur est deja inscrit
+        - si il a un role qui existe 
+  
+=>(test)routes 
+    => contient toutes les routes de l'api avec les controllers et middlewares intégrés 
+
+server.js 
+    => declaration des modules necessaires pour express et cors 
+    => declaration de la BD 
+    => cors options pour eviter les erreurs avec l'echange vers un client front 
+    => declarations des routes pour qu'elles puissent être utilisables 
+    => connexion a la base de donnée et au serveur 

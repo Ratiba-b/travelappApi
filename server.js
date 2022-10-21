@@ -14,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:8081",
+    origin: " *",
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     allowedHeaders:
       "Origin, X-Requested-With, x-access-token, role, Content, Accept, Content-Type, Authorization ",
@@ -28,6 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 const user_router = require("./routes/user.routes");
 const cocktail_router = require("./routes/cocktail.routes");
 const travel_router = require("./routes/travel.routes");
+const planning_router = require("./routes/planning.routes");
+const todo_router = require("./routes/todo.routes");
 
 const auth_router = require("./routes/auth.routes");
 
@@ -37,12 +39,17 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to travelapp application." });
 });
 
-app.use("/users", checkTokenMiddleware, user_router);
+app.use("/users", user_router);
 app.use("/cocktails", cocktail_router);
-// app.use("/travels", travel_router);
+app.use("/travels", travel_router);
+app.use("/plannings", planning_router);
+app.use("/todos", todo_router);
 
 app.use("/auth", auth_router);
-
+// TEST ROUTES ROLES
+// routes
+require("./testRoutes/auth.routes")(app);
+require("./testRoutes/user.routes")(app);
 app.get("*", (req, res) => {
   res.status(501).send("server.js send : Tu cherches quoi ?");
 });

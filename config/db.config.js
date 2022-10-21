@@ -25,10 +25,20 @@ db.Cocktail = require("../models/cocktail.model")(sequelize);
 db.Travel = require("../models/travel.model")(sequelize);
 db.Planning = require("../models/planning.model")(sequelize);
 db.Todo = require("../models/todo.model")(sequelize);
+db.Role = require("../models/role.model")(sequelize);
 
 /**************************************/
 /**MISE EN PLACE DES RELATIONS  */
-
+db.Role.belongsToMany(db.User, {
+  through: "user_roles",
+  foreignKey: "roleId",
+  otherKey: "userId",
+});
+db.User.belongsToMany(db.Role, {
+  through: "user_roles",
+  foreignKey: "userId",
+  otherKey: "roleId",
+});
 db.User.hasMany(db.Cocktail, {
   foreignKey: "user_id",
   onDelete: "cascade",
@@ -52,6 +62,7 @@ db.Travel.belongsTo(db.User, { foreignKey: "user_id" });
 db.Planning.belongsTo(db.Travel, { foreignKey: "travel_id" });
 db.Todo.belongsTo(db.Travel, { foreignKey: "travel_id" });
 
+db.ROLES = ["user", "admin", "pro"];
 // db.Travel.belongsTo(db.User, { foreignKey: "user_id" });
 // db.Travel.hasOne(db.Planning, db.User, { foreignKey: "travel_id" });
 // db.Planning.belongsTo(db.Travel, db.User, { foreignKey: "travel_id, user_id" });
@@ -64,5 +75,25 @@ db.Todo.belongsTo(db.Travel, { foreignKey: "travel_id" });
 //   console.log("Database sync error", err);
 // });
 
-db.sequelize.sync({ alter: true });
+db.sequelize.sync({ alter: true }).then(() => {
+  console.log("Drop and Resync Db");
+  // initial();
+});
+
+// function initial() {
+//   Role.create({
+//     id: 1,
+//     name: "user",
+//   });
+
+//   Role.create({
+//     id: 2,
+//     name: "pro",
+//   });
+
+//   Role.create({
+//     id: 3,
+//     name: "admin",
+//   });
+// }
 module.exports = db;

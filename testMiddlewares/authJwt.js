@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
-const config = require("../config/auth.config.js");
 const db = require("../config/db.config");
-const User = db.user;
+const User = db.User;
 
 verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
@@ -12,7 +11,7 @@ verifyToken = (req, res, next) => {
     });
   }
 
-  jwt.verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(401).send({
         message: "Unauthorized!",
@@ -41,28 +40,28 @@ isAdmin = (req, res, next) => {
   });
 };
 
-isModerator = (req, res, next) => {
+isPro = (req, res, next) => {
   User.findByPk(req.userId).then((user) => {
     user.getRoles().then((roles) => {
       for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "moderator") {
+        if (roles[i].name === "pro") {
           next();
           return;
         }
       }
 
       res.status(403).send({
-        message: "Require Moderator Role!",
+        message: "Require Pro Role!",
       });
     });
   });
 };
 
-isModeratorOrAdmin = (req, res, next) => {
+isProOrAdmin = (req, res, next) => {
   User.findByPk(req.userId).then((user) => {
     user.getRoles().then((roles) => {
       for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "moderator") {
+        if (roles[i].name === "pro") {
           next();
           return;
         }
@@ -74,7 +73,7 @@ isModeratorOrAdmin = (req, res, next) => {
       }
 
       res.status(403).send({
-        message: "Require Moderator or Admin Role!",
+        message: "Require pro or Admin Role!",
       });
     });
   });
@@ -83,7 +82,7 @@ isModeratorOrAdmin = (req, res, next) => {
 const authJwt = {
   verifyToken: verifyToken,
   isAdmin: isAdmin,
-  isModerator: isModerator,
-  isModeratorOrAdmin: isModeratorOrAdmin,
+  isPro: isPro,
+  isProOrAdmin: isProOrAdmin,
 };
 module.exports = authJwt;

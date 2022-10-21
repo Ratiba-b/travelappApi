@@ -28,17 +28,17 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       location: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         defaultValue: "",
         allowNull: false,
       },
       startDate: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
 
         allowNull: false,
       },
       endDate: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
 
         allowNull: false,
       },
