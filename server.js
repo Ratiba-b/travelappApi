@@ -2,8 +2,30 @@
 /** IMPORT DES MODULES */
 const express = require("express");
 const cors = require("cors");
-const checkTokenMiddleware = require("./jsonwebtoken/check");
+// const checkTokenMiddleware = require("./jsonwebtoken/check");
+const { authJwt } = require("./Middlewares/verifySignUp");
+const path = require("path");
 
+// const multer = require("multer");
+
+// const fileFilter = function (req, picture, cb) {
+//   const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+
+//   if (!allowedTypes.includes(picture.mimetype)) {
+//     const error = new Error("wrong file type");
+//     error.code = "LIMIT_FILE_TYPES";
+//     return cb(error, false);
+//   }
+//   cb(null, true);
+// };
+// const MAX_SIZE = 200000;
+// const upload = multer({
+//   dest: "./uploads/",
+//   fileFilter,
+//   limits: {
+//     fileSize: MAX_SIZE,
+//   },
+// });
 /****************************************/
 /** IMPORT DE LA CONNEXION A LA DB */
 let DB = require("./config/db.config");
@@ -12,6 +34,9 @@ let DB = require("./config/db.config");
 /** INITIALISATION DE L'API */
 const app = express();
 
+var dir = path.join(__dirname, "uploads");
+
+app.use(express.static(dir));
 app.use(
   cors({
     origin: " *",
@@ -30,8 +55,11 @@ const cocktail_router = require("./routes/cocktail.routes");
 const travel_router = require("./routes/travel.routes");
 const planning_router = require("./routes/planning.routes");
 const todo_router = require("./routes/todo.routes");
+const event_router = require("./routes/event.routes");
+const task_router = require("./routes/task.routes");
+const article_router = require("./routes/article.routes");
 
-const auth_router = require("./routes/auth.routes");
+// const auth_router = require("./routes/auth.routes");
 
 /*****************************************/
 /** MISE EN PLACE DU ROUTAGE */
@@ -43,13 +71,36 @@ app.use("/users", user_router);
 app.use("/cocktails", cocktail_router);
 app.use("/travels", travel_router);
 app.use("/plannings", planning_router);
+app.use("/events", event_router);
 app.use("/todos", todo_router);
+app.use("/todos/task", task_router);
+app.use("/articles", article_router);
 
-app.use("/auth", auth_router);
+// app.use("/auth", auth_router);
+
+// route picture article
+// app.put("/article/upload", upload.single("picture"), (req, res) => {
+//   res.json({ picture: req.picture });
+// });
+
+// app.use(function (err, req, res, next) {
+//   if (err.code === "LIMIT_FILE_TYPES") {
+//     res.status(422).json({ error: "Only image are allowed" });
+//     return;
+//   }
+
+//   if (err.code === "LIMIT_FILE_SIZE") {
+//     res
+//       .status(422)
+//       .json({ error: `Size is too large max is ${MAX_SIZE / 1000}kb` });
+//     return;
+//   }
+// });
+
 // TEST ROUTES ROLES
 // routes
 require("./testRoutes/auth.routes")(app);
-require("./testRoutes/user.routes")(app);
+// require("./testRoutes/user.routes")(app);
 app.get("*", (req, res) => {
   res.status(501).send("server.js send : Tu cherches quoi ?");
 });

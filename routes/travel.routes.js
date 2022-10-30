@@ -1,10 +1,9 @@
 /**********************************************/
 /** IMPORT DES MODULES */
 const express = require("express");
-const { authJwt } = require("../testMiddlewares");
+const { authJwt } = require("../Middlewares");
 const travelCtrl = require("../controllers/travel.controller");
 
-const checkTokenMiddleware = require("../jsonwebtoken/check");
 const cocktailsCtrl = require("../controllers/cocktails.controller");
 const DB = require("../config/db.config");
 const Travel = DB.Travel;

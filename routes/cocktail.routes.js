@@ -1,7 +1,7 @@
 /**********************************************/
 /** IMPORT DES MODULES */
 const express = require("express");
-const checkTokenMiddleware = require("../jsonwebtoken/check");
+const checkTokenMiddleware = require("../_ignoreFolder/check");
 const cocktailsCtrl = require("../controllers/cocktails.controller");
 
 /***********************************************/

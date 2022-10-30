@@ -31,15 +31,8 @@ exports.getPlanningById = async (req, res) => {
     let planning = await Planning.findOne({
       where: { id: planningId },
       include: {
-        model: Travel,
-        attributes: [
-          "id",
-          "title",
-          "description",
-          "location",
-          "startDate",
-          "endDate",
-        ],
+        model: Event,
+        attributes: ["id", "description", "start", "end"],
       },
     });
 
@@ -61,29 +54,36 @@ exports.getPlanningById = async (req, res) => {
 
 // ajouter un nouveau planning
 exports.addPlanning = async (req, res) => {
-  const { travel_id, title, event, start, end } = req.body;
+  const data = {
+    travel_id: req.body.travel_id,
+    start: req.body.start,
+    end: req.body.end,
+    description: req.body.description,
+    location: req.body.location,
+  };
   // validation des donnes recues
-  if (!travel_id || !title || !event || !start || !end) {
+  if (!data) {
     console.log(req.body);
     return res.status(400).json({ message: "missing datas" });
   }
+  console.log(req.body.travel_id);
+  console.log("body", data.travel_id);
 
   try {
     // verification si le planning existe
-
-    let planning = await Planning.findOne({
-      where: { title: title },
-      raw: true,
-    });
-    if (planning !== null) {
-      return res
-        .status(409)
-        .json({ message: `The cocktail ${title} already exists` });
-    }
+    console.log("travelID", data.travel_id);
+    // let planning = await Planning.findOne({
+    //   where: { travel_id: travel_id },
+    //   // attributes: ["id"],
+    // });
+    // if (planning !== null) {
+    //   return res.status(409).json({ message: "The planning already exists" });
+    // }
 
     //creation du planning
+    // console.log("planning", planning);
 
-    planning = await Planning.create(req.body);
+    let planning = await Planning.create(data);
     return res.json({ message: "Planning created", data: planning });
   } catch (err) {
     console.log("err", err);

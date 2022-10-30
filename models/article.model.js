@@ -3,29 +3,31 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  return (Planning = sequelize.define("Planning", {
+  return (Article = sequelize.define("Article", {
     id: {
       type: DataTypes.INTEGER(10),
       primaryKey: true,
       autoIncrement: true,
     },
 
-    travel_id: {
+    user_id: {
       type: DataTypes.INTEGER(10),
       allowNull: false,
     },
 
-    start: {
-      type: DataTypes.DATE,
-    },
-    end: {
-      type: DataTypes.DATE,
-    },
-    description: {
+    title: {
       type: DataTypes.STRING(100),
     },
     location: {
       type: DataTypes.STRING(100),
+    },
+
+    description: {
+      type: DataTypes.TEXT,
+    },
+
+    picture: {
+      type: DataTypes.TEXT,
     },
   }));
 };

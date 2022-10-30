@@ -28,6 +28,7 @@ exports.getUser = async (req, res) => {
     let user = await User.findOne({
       where: { id: userId },
       attributes: ["id", "username", "email"],
+      include: [{ model: Article }, { model: Travel }],
     });
     if (user === null) {
       return res.status(404).json({ message: "This user does not exist" });

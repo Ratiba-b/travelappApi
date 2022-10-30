@@ -3,16 +3,19 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  return (Planning = sequelize.define("Planning", {
+  return (Event = sequelize.define("Event", {
     id: {
       type: DataTypes.INTEGER(10),
       primaryKey: true,
       autoIncrement: true,
     },
 
-    travel_id: {
+    planning_id: {
       type: DataTypes.INTEGER(10),
       allowNull: false,
+    },
+    description: {
+      type: DataTypes.STRING(100),
     },
 
     start: {
@@ -21,11 +24,8 @@ module.exports = (sequelize) => {
     end: {
       type: DataTypes.DATE,
     },
-    description: {
-      type: DataTypes.STRING(100),
-    },
-    location: {
-      type: DataTypes.STRING(100),
+    allDay: {
+      type: DataTypes.BOOLEAN,
     },
   }));
 };

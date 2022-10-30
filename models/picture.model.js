@@ -3,16 +3,15 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  return (Todo = sequelize.define("Todo", {
+  return (Picture = sequelize.define("Picture", {
     id: {
       type: DataTypes.INTEGER(10),
       primaryKey: true,
       autoIncrement: true,
     },
 
-    travel_id: {
-      type: DataTypes.INTEGER(10),
-      allowNull: false,
+    picture: {
+      type: DataTypes.TEXT,
     },
   }));
 };

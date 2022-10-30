@@ -6,25 +6,31 @@ const Travel = DB.Travel;
 // const Planning = db.planning;
 
 exports.addTravel = async (req, res) => {
-  const { user_id, title, description, location, startDate, endDate } =
-    req.body;
+  const { title, description, location, startDate, endDate } = req.body;
+  const user_id = parseInt(req.userId);
+
+  const data = {
+    user_id: user_id,
+    title: title,
+    description: description,
+    location: location,
+    startDate: startDate,
+    endDate: endDate,
+  };
+  console.log("userid", req.userId);
 
   // validation des donnes recues
-  if (
-    !user_id ||
-    !title ||
-    !description ||
-    !location ||
-    !startDate ||
-    !endDate
-  ) {
+  if (!title || !description || !location || !startDate || !endDate) {
     console.log(req.body);
     return res.status(400).json({ message: "missing datas" });
   }
 
   try {
     // verification si le cocktail existe
-    let travel = await Travel.findOne({ where: { title: title }, raw: true });
+    let travel = await Travel.findOne({
+      where: { title: title },
+      attributes: ["id", "title"],
+    });
 
     if (travel !== null) {
       console.log(travel);
@@ -33,7 +39,8 @@ exports.addTravel = async (req, res) => {
         .json({ message: `The travel ${title} already exists` });
     }
     //creation du cocktail
-    travel = Travel.create(req.body);
+    travel = await Travel.create(data);
+    console.log(travel);
     return res.json({ message: "Travel created", data: travel });
   } catch (err) {
     console.log("err", err);
@@ -61,7 +68,7 @@ exports.findAll = () => {
 };
 
 // get all travels for one user
-exports.findUserById = (userId) => {
+exports.findTravelByUser = (userId) => {
   return User.findByPk(userId, { include: ["travels"] })
     .then((user) => {
       return user;
@@ -84,7 +91,8 @@ exports.getTravelById = async (req, res) => {
     // recuperer le cocktail
     let travel = await Travel.findOne({
       where: { id: travelId },
-      include: { model: User, attributes: ["id", "username", "email"] },
+      include: [{ model: Planning }, { model: Todo }],
+      // include: { model: Todo },
     });
     if (travel == null) {
       return res.status(404).json({ message: "This travel does not exist" });

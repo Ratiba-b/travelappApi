@@ -1,7 +1,7 @@
 /**********************************************/
 /** IMPORT DES MODULES */
 const express = require("express");
-const userCtrl = require("../controllers/user.controller");
+const eventCtrl = require("../controllers/event.controller");
 const { authJwt } = require("../Middlewares");
 
 /***********************************************/
@@ -22,34 +22,22 @@ router.use((req, res, next) => {
 
 /***********************************************/
 /** ROUTAGE DE LA RESSOURCE USER */
-router.get("/", [authJwt.verifyToken, authJwt.isPro], userCtrl.getAllUsers);
+router.get("/", eventCtrl.getAllEvents);
 
-router.get("/:id", [authJwt.verifyToken, authJwt.isPro], userCtrl.getUser);
+router.get("/:id", eventCtrl.getEventById);
 
-router.put("", [authJwt.verifyToken, authJwt.isPro], userCtrl.addUser);
+router.put("", eventCtrl.addEvent);
 
-router.patch("/:id", [authJwt.verifyToken, authJwt.isPro], userCtrl.updateUser);
+router.patch("/:id", eventCtrl.updateEvent);
 
-router.post(
-  "/untrash/:id",
-  [authJwt.verifyToken, authJwt.isPro],
-  userCtrl.untrashUser
-);
+router.post("/untrash/:id", eventCtrl.untrashEvent);
 
 /************************* */
 /** METTRE A LA POUBELLE*/
-router.delete(
-  "/trash/:id",
-  [authJwt.verifyToken, authJwt.isPro],
-  userCtrl.trashUser
-);
+router.delete("/trash/:id", eventCtrl.trashEvent);
 
 /************************************************* */
 /**SUPPRIMER DEFINITIVEMENT DE LA BASE DE DONNEES */
-router.delete(
-  "/:id",
-  [authJwt.verifyToken, authJwt.isPro],
-  userCtrl.deleteUser
-);
+router.delete("/:id", eventCtrl.destroyEvent);
 
 module.exports = router;
