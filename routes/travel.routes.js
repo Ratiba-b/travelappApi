@@ -22,7 +22,7 @@ router.use((req, res, next) => {
 
 /***********************************************/
 /** ROUTAGE DE LA RESSOURCE TRAVELS */
-router.get("/", [authJwt.verifyToken], travelCtrl.getAllTravels);
+router.get("/", [authJwt.verifyToken], travelCtrl.findTravelByUser);
 
 router.get("/:id", [authJwt.verifyToken], travelCtrl.getTravelById);
 

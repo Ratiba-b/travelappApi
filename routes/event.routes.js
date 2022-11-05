@@ -22,22 +22,22 @@ router.use((req, res, next) => {
 
 /***********************************************/
 /** ROUTAGE DE LA RESSOURCE USER */
-router.get("/", eventCtrl.getAllEvents);
+router.get("/", [authJwt.verifyToken], eventCtrl.getAllEvents);
 
-router.get("/:id", eventCtrl.getEventById);
+router.get("/:id", [authJwt.verifyToken], eventCtrl.getEventById);
 
-router.put("", eventCtrl.addEvent);
+router.put("", [authJwt.verifyToken], eventCtrl.addEvent);
 
-router.patch("/:id", eventCtrl.updateEvent);
+router.patch("/:id", [authJwt.verifyToken], eventCtrl.updateEvent);
 
-router.post("/untrash/:id", eventCtrl.untrashEvent);
+router.post("/untrash/:id", [authJwt.verifyToken], eventCtrl.untrashEvent);
 
 /************************* */
 /** METTRE A LA POUBELLE*/
-router.delete("/trash/:id", eventCtrl.trashEvent);
+router.delete("/trash/:id", [authJwt.verifyToken], eventCtrl.trashEvent);
 
 /************************************************* */
 /**SUPPRIMER DEFINITIVEMENT DE LA BASE DE DONNEES */
-router.delete("/:id", eventCtrl.destroyEvent);
+router.delete("/:id", [authJwt.verifyToken], eventCtrl.destroyEvent);
 
 module.exports = router;

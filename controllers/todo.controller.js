@@ -41,7 +41,7 @@ exports.getTodoById = async (req, res) => {
     return res.json({ data: todo });
   } catch (err) {
     console.log("dans le catch");
-    console.log("err message");
+    console.log("err message", err);
     console.log("err status");
 
     return res.status(500).json({ message: "Database error", error: err });
@@ -49,9 +49,9 @@ exports.getTodoById = async (req, res) => {
 };
 
 exports.addTodo = async (req, res) => {
-  const { travel_id } = req.body;
+  const { travel_id, task } = req.body;
   // validation des donnes recues
-  if (!travel_id) {
+  if (!travel_id || !task) {
     console.log(req.body);
     return res.status(400).json({ message: "missing datas" });
   }
@@ -59,17 +59,17 @@ exports.addTodo = async (req, res) => {
   try {
     // verification si le planning existe
 
-    let todo = await Todo.findOne({
-      where: { travel_id: travel_id },
-      raw: true,
-    });
-    if (todo !== null) {
-      return res.status(409).json({ message: `The todo already exists` });
-    }
+    // let todo = await Todo.findOne({
+    //   where: { travel_id: travel_id },
+    //   raw: true,
+    // });
+    // if (todo !== null) {
+    //   return res.status(409).json({ message: `The todo already exists` });
+    // }
 
     //creation du planning
 
-    todo = await Todo.create(req.body);
+    let todo = await Todo.create(req.body);
     return res.json({ message: "Todo created", data: todo });
   } catch (err) {
     console.log("err", err);

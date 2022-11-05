@@ -3,6 +3,8 @@
 const express = require("express");
 const DB = require("../config/db.config");
 const TodoCtrl = require("../controllers/todo.controller");
+const { authJwt } = require("../Middlewares");
+
 
 let router = express.Router();
 
@@ -16,18 +18,18 @@ router.use((req, res, next) => {
 
 /***********************************************/
 /** ROUTAGE DE LA RESSOURCE COCKTAIL */
-router.get("/", TodoCtrl.getAllTodos);
-router.get("/:id", TodoCtrl.getTodoById);
+router.get("/", [authJwt.verifyToken], TodoCtrl.getAllTodos);
+router.get("/:id", [authJwt.verifyToken], TodoCtrl.getTodoById);
 
-router.put("", TodoCtrl.addTodo);
-router.patch("/update", TodoCtrl.updateTodo);
+router.put("", [authJwt.verifyToken], TodoCtrl.addTodo);
+router.patch("/update", [authJwt.verifyToken], TodoCtrl.updateTodo);
 
-router.post("/untrash", TodoCtrl.untrashTodo);
+router.post("/untrash", [authJwt.verifyToken], TodoCtrl.untrashTodo);
 /************************* */
 /** METTRE A LA POUBELLE*/
-router.delete("/trash/:id", TodoCtrl.trashTodo);
+router.delete("/trash/:id", [authJwt.verifyToken], TodoCtrl.trashTodo);
 
 /************************************************* */
 /**SUPPRIMER DEFINITIVEMENT DE LA BASE DE DONNEES */
-router.delete("/:id", TodoCtrl.destroyTodo);
+router.delete("/:id", [authJwt.verifyToken], TodoCtrl.destroyTodo);
 module.exports = router;

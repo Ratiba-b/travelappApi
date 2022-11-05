@@ -68,15 +68,57 @@ exports.findAll = () => {
 };
 
 // get all travels for one user
-exports.findTravelByUser = (userId) => {
-  return User.findByPk(userId, { include: ["travels"] })
-    .then((user) => {
-      return user;
-    })
-    .catch((err) => {
-      console.log(">> Error while finding tutorials: ", err);
+exports.findTravelByUser = async (req, res) => {
+  let userId = parseInt(req.userId);
+  console.log(userId);
+  if (!userId) {
+    console.log("userId", userId);
+    return res.status(400).json({ message: "Missing parameter" });
+  }
+  try {
+    let travel = await Travel.findAll({
+      where: { user_id: userId },
+      include: { model: User },
     });
+    if (travel === null) {
+      return res.status(404).json({ message: "This user has no travels" });
+    }
+    return res.json({ data: travel });
+  } catch (err) {
+    console.log("travels", err);
+    res.status(500).json({ message: "Database error", error: err });
+  }
+
+  // .then((travel) => {
+  //   console.log("user findTravelByUser", travel);
+  //   return travel;
+  // })
+  // .catch((err) => {
+  //   console.log(">> Error while finding travels: ", err);
+  // });
+  // try {
+  //   let travel = await Travel.findAll({
+  //     where: { user_id: userId },
+  //   });
+  //   if (travel === null) {
+  //     return res.status(404).json({ message: "This user does not exist" });
+  //   }
+  //   return res.json({ data: user });
+  // } catch (err) {
+  //   res.status(500).json({ message: "Database error", error: err });
+  // }
 };
+
+// (userId) => {
+//   return User.findByPk(userId, { include: ["travels"] })
+//     .then((user) => {
+//       console.log("user findTravelByUser", user);
+//       return user;
+//     })
+//     .catch((err) => {
+//       console.log(">> Error while finding travels: ", err);
+//     });
+// };
 
 // get one travel based on it's id
 exports.getTravelById = async (req, res) => {

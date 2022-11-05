@@ -61,16 +61,16 @@ db.Planning.hasMany(db.Event, {
   onDelete: "cascade",
 });
 
-db.Todo.hasMany(db.Task, {
-  foreignKey: "todo_id",
-  onDelete: "cascade",
-});
+// db.Todo.hasMany(db.Task, {
+//   foreignKey: "todo_id",
+//   onDelete: "cascade",
+// });
 
 db.Travel.hasMany(db.Planning, {
   foreignKey: "travel_id",
   onDelete: "cascade",
 });
-db.Travel.hasOne(db.Todo, {
+db.Travel.hasMany(db.Todo, {
   foreignKey: "travel_id",
   onDelete: "cascade",
 });
@@ -85,7 +85,7 @@ db.Article.belongsTo(db.User, { foreignKey: "user_id" });
 db.Planning.belongsTo(db.Travel, { foreignKey: "travel_id" });
 db.Todo.belongsTo(db.Travel, { foreignKey: "travel_id" });
 db.Event.belongsTo(db.Planning, { foreignKey: "planning_id" });
-db.Task.belongsTo(db.Todo, { foreignKey: "todo_id" });
+// db.Task.belongsTo(db.Todo, { foreignKey: "todo_id" });
 // db.Picture.belongsTo(db.Article, { foreignKey: "article_id" });
 
 db.ROLES = ["user", "admin", "pro"];
@@ -101,10 +101,10 @@ db.ROLES = ["user", "admin", "pro"];
 //   console.log("Database sync error", err);
 // });
 
-db.sequelize.sync({ alter: true }).then(() => {
-  console.log("Drop and Resync Db");
-  // initial();
-});
+// db.sequelize.sync({ alter: true }).then(() => {
+//   console.log("Drop and Resync Db");
+//   // initial();
+// });
 
 // function initial() {
 //   Role.create({

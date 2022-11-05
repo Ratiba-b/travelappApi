@@ -57,6 +57,7 @@ exports.signin = (req, res) => {
   })
     .then((user) => {
       if (!user) {
+        console.log("user signin", user);
         return res.status(404).send({ message: "User Not found." });
       }
 
@@ -79,6 +80,7 @@ exports.signin = (req, res) => {
 
       let authorities = [];
       user.getRoles().then((roles) => {
+        console.log("user.getRoles()", user.getRoles());
         for (let i = 0; i < roles.length; i++) {
           authorities.push("ROLE_" + roles[i].name.toUpperCase());
         }

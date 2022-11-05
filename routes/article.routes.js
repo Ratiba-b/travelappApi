@@ -5,6 +5,7 @@ const DB = require("../config/db.config");
 const articleCtrl = require("../controllers/article.controller");
 const multer = require("multer");
 const path = require("path");
+const { authJwt } = require("../Middlewares");
 
 const storage = multer.diskStorage({
   destination: "./uploads/",
@@ -30,18 +31,48 @@ router.use((req, res, next) => {
 
 /***********************************************/
 /** ROUTAGE DE LA RESSOURCE COCKTAIL */
-router.get("/", articleCtrl.getAllArticles);
-router.get("/:id", articleCtrl.getArticleById);
+router.get(
+  "/",
+  [authJwt.verifyToken, authJwt.isUserOrAdmin],
+  articleCtrl.getAllArticles
+);
+router.get(
+  "/:id",
+  [authJwt.verifyToken, authJwt.isUserOrAdmin],
+  articleCtrl.getArticleById
+);
 
-router.put("", upload.single("picture"), articleCtrl.addArticle);
-router.patch("/:id", upload.single("picture"), articleCtrl.updateArticle);
+router.put(
+  "",
+  [authJwt.verifyToken, authJwt.isUserOrAdmin],
+  upload.single("picture"),
+  articleCtrl.addArticle
+);
+router.patch(
+  "/:id",
+  upload.single("picture"),
+  [authJwt.verifyToken, authJwt.isUserOrAdmin],
+  articleCtrl.updateArticle
+);
 
-router.post("/untrash", articleCtrl.untrashArticle);
+router.post(
+  "/untrash",
+  [authJwt.verifyToken, authJwt.isUserOrAdmin],
+  articleCtrl.untrashArticle
+);
 /************************* */
 /** METTRE A LA POUBELLE*/
-router.delete("/trash/:id", articleCtrl.trashArticle);
+router.delete(
+  "/trash/:id",
+  [authJwt.verifyToken, authJwt.isUserOrAdmin],
+  articleCtrl.trashArticle
+);
 
 /************************************************* */
 /**SUPPRIMER DEFINITIVEMENT DE LA BASE DE DONNEES */
-router.delete("/:id", articleCtrl.destroyArticle);
+router.delete(
+  "/:id",
+  [authJwt.verifyToken, authJwt.isUserOrAdmin],
+  articleCtrl.destroyArticle
+);
 module.exports = router;

@@ -14,5 +14,9 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER(10),
       allowNull: false,
     },
+    task: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
   }));
 };

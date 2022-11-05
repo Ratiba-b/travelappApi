@@ -24,9 +24,9 @@ router.use((req, res, next) => {
 /** ROUTAGE DE LA RESSOURCE USER */
 router.get("/", [authJwt.verifyToken, authJwt.isPro], userCtrl.getAllUsers);
 
-router.get("/:id", [authJwt.verifyToken, authJwt.isPro], userCtrl.getUser);
+router.get("/:id", [authJwt.verifyToken], userCtrl.getUser);
 
-router.put("", [authJwt.verifyToken, authJwt.isPro], userCtrl.addUser);
+router.put("", userCtrl.addUser);
 
 router.patch("/:id", [authJwt.verifyToken, authJwt.isPro], userCtrl.updateUser);
 
