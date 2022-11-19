@@ -1,9 +1,8 @@
-/***********************************************/
 /** IMPORT DES MODULES */
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  return (Planning = sequelize.define("Planning", {
+  return (Event = sequelize.define("StepsTravel", {
     id: {
       type: DataTypes.INTEGER(10),
       primaryKey: true,
@@ -14,24 +13,18 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER(10),
       allowNull: false,
     },
+    location: {
+      type: DataTypes.STRING(100),
+    },
+    details: {
+      type: DataTypes.STRING(100),
+    },
 
     start: {
       type: DataTypes.DATE,
     },
     end: {
       type: DataTypes.DATE,
-    },
-    description: {
-      type: DataTypes.STRING(100),
-    },
-    location: {
-      type: DataTypes.STRING(100),
-    },
-    hourStart: {
-      type: DataTypes.STRING(100),
-    },
-    hourEnd: {
-      type: DataTypes.STRING(100),
     },
   }));
 };

@@ -58,8 +58,9 @@ const todo_router = require("./routes/todo.routes");
 const event_router = require("./routes/event.routes");
 const task_router = require("./routes/task.routes");
 const article_router = require("./routes/article.routes");
+const step_router = require("./routes/step.routes");
 
-// const auth_router = require("./routes/auth.routes");
+const auth_router = require("./routes/auth.routes");
 
 /*****************************************/
 /** MISE EN PLACE DU ROUTAGE */
@@ -75,6 +76,7 @@ app.use("/events", event_router);
 app.use("/todos", todo_router);
 app.use("/todos/task", task_router);
 app.use("/articles", article_router);
+app.use("/steps", article_router);
 
 // app.use("/auth", auth_router);
 
@@ -99,7 +101,7 @@ app.use("/articles", article_router);
 
 // TEST ROUTES ROLES
 // routes
-require("./testRoutes/auth.routes")(app);
+require("./routes/auth.routes")(app);
 // require("./testRoutes/user.routes")(app);
 app.get("*", (req, res) => {
   res.status(501).send("server.js send : Tu cherches quoi ?");

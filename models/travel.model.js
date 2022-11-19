@@ -17,6 +17,10 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER(10),
         allowNull: false,
       },
+      created_for: {
+        type: DataTypes.INTEGER(10),
+        allowNull: false,
+      },
       title: {
         type: DataTypes.STRING(100),
         defaultValue: "",

@@ -6,11 +6,14 @@ const Travel = DB.Travel;
 // const Planning = db.planning;
 
 exports.addTravel = async (req, res) => {
-  const { title, description, location, startDate, endDate } = req.body;
+  const { title, description, location, startDate, endDate, created_for } =
+    req.body;
   const user_id = parseInt(req.userId);
 
   const data = {
     user_id: user_id,
+    created_for: created_for,
+
     title: title,
     description: description,
     location: location,
@@ -20,7 +23,14 @@ exports.addTravel = async (req, res) => {
   console.log("userid", req.userId);
 
   // validation des donnes recues
-  if (!title || !description || !location || !startDate || !endDate) {
+  if (
+    !title ||
+    !description ||
+    !location ||
+    !startDate ||
+    !endDate ||
+    !created_for
+  ) {
     console.log(req.body);
     return res.status(400).json({ message: "missing datas" });
   }

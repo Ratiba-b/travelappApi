@@ -3,46 +3,54 @@
 const DB = require("../config/db.config");
 const User = DB.User;
 const Travel = DB.Travel;
-const Planning = DB.Planning;
+const Step = DB.Step;
 
 /***********************************************/
-/** ROUTAGE DE LA RESSOURCE PLANNING */
+/** ROUTAGE DE LA RESSOURCE step */
 
-exports.getAllPlannings = (req, res) => {
-  Planning.findAll()
-    .then((planning) => res.json({ data: planning }))
+exports.getAllSteps = (req, res) => {
+  Step.findAll()
+    .then((step) => res.json({ data: step }))
     .catch((err) =>
       res.status(500).json({ message: "Database error", error: err })
     );
 };
 
-// recuperer un voyage
-exports.getPlanningById = async (req, res) => {
-  let planningId = parseInt(req.params.id);
+// recuperer une etape
+exports.getStepById = async (req, res) => {
+  let stepId = parseInt(req.params.id);
 
   // verifier si le champ id est present et coherent
-  if (!planningId) {
+  if (!stepId) {
     return res.status(400).json({ message: "Missing parameter" });
   }
 
   try {
-    //Recuperer le planning
+    //Recuperer le step
 
-    let planning = await Planning.findOne({
-      where: { id: planningId },
+    let step = await Step.findOne({
+      where: { id: stepId },
       include: {
-        model: Event,
-        attributes: ["id", "description", "start", "end"],
+        model: Planning,
+        attributes: [
+          "id",
+          "description",
+          "start",
+          "end",
+          "location",
+          "hourStart",
+          "hourEnd",
+        ],
       },
     });
 
     //test si resultat
-    if (planning === null) {
-      return res.status(404).json({ message: "This planning does not exist" });
+    if (step === null) {
+      return res.status(404).json({ message: "This step does not exist" });
     }
 
-    // renvoi du planning trouvé
-    return res.json({ data: planning });
+    // renvoi du step trouvé
+    return res.json({ data: step });
   } catch (err) {
     console.log("dans le catch");
     console.log("err message");
@@ -52,15 +60,13 @@ exports.getPlanningById = async (req, res) => {
   }
 };
 
-// ajouter un nouveau planning
-exports.addPlanning = async (req, res) => {
+// ajouter un nouveau step
+exports.addStep = async (req, res) => {
   const data = {
     travel_id: req.body.travel_id,
     start: req.body.start,
     end: req.body.end,
-    hourStart: req.body.hourStart,
-    hourEnd: req.body.hourEnd,
-    description: req.body.description,
+    details: req.body.details,
     location: req.body.location,
   };
   // validation des donnes recues
@@ -72,99 +78,99 @@ exports.addPlanning = async (req, res) => {
   console.log("body", data.travel_id);
 
   try {
-    // verification si le planning existe
+    // verification si le step existe
     console.log("travelID", data.travel_id);
-    // let planning = await Planning.findOne({
+    // let step = await step.findOne({
     //   where: { travel_id: travel_id },
     //   // attributes: ["id"],
     // });
-    // if (planning !== null) {
-    //   return res.status(409).json({ message: "The planning already exists" });
+    // if (step !== null) {
+    //   return res.status(409).json({ message: "The step already exists" });
     // }
 
-    //creation du planning
-    // console.log("planning", planning);
+    //creation du step
+    // console.log("step", step);
 
-    let planning = await Planning.create(data);
-    return res.json({ message: "Planning created", data: planning });
+    let step = await Step.create(data);
+    return res.json({ message: "step created", data: step });
   } catch (err) {
     console.log("err", err);
     return res.status(500).json({ message: "Database error", error: err });
   }
 };
 
-// update un planning
-exports.updatePlanning = async (req, res) => {
-  let planningId = parseInt(req.params.id);
+// update un step
+exports.updateStep = async (req, res) => {
+  let stepId = parseInt(req.params.id);
 
   // VERIFICATION SI LE CHAMP ID ET COHERENT
-  if (planningId) {
+  if (stepId) {
     return res.status(400).json({ message: "Missing parameter" });
   }
 
   try {
     //RECHERCHE D"UN COCKTAIL et verification
-    let planning = await Planning.findOne({
-      where: { id: planningId },
+    let step = await Step.findOne({
+      where: { id: stepId },
       raw: true,
     });
-    // VERIFIER SI PLANNING EXISTE
-    if (planning === null) {
-      return res.status(404).json({ message: "This planning does not exist" });
+    // VERIFIER SI step EXISTE
+    if (step === null) {
+      return res.status(404).json({ message: "This step does not exist" });
     }
 
-    // MISE A JOUR DU PLANNING
-    await Planning.update(req.body, { where: { id: travelId } });
+    // MISE A JOUR DU step
+    await Step.update(req.body, { where: { id: travelId } });
     return res.json({ message: "Panning Updated" });
   } catch (err) {
     return res.status(500).json({ message: "Database error", error: err });
   }
 };
 
-// trash un planning
-exports.trashPlanning = (req, res) => {
-  let planningId = parseInt(req.params.id);
+// trash un step
+exports.trashStep = (req, res) => {
+  let stepId = parseInt(req.params.id);
 
   //VERIFICATIOn SI LE CHAMP ID EST PRESENT ET COHERENT
-  if (!planningId) {
+  if (!stepId) {
     res.status(400).json({ message: "Missing parameter" });
   }
 
   //SUPRESSION DE L'UTILISATEUR
-  Planning.destroy({ where: { id: planningId } })
+  Step.destroy({ where: { id: stepId } })
     .then(() => res.status(204).json({}))
     .catch((err) =>
       res.status(500).json({ message: "Database error", error: err })
     );
 };
 
-// untrash planning
-exports.untrashPlanning = async (req, res) => {
-  let planningId = parseInt(req.params.id);
+// untrash step
+exports.untrashStep = async (req, res) => {
+  let stepId = parseInt(req.params.id);
 
   // VERIFICATION SI LE CHAMP ID ET COHERENT
 
-  if (!planningId) {
+  if (!stepId) {
     return res.status(400).json({ message: "Missing parameter" });
   }
-  await Planning.restore({ where: { id: planningId } })
+  await Step.restore({ where: { id: stepId } })
     .then(() => res.status(204).json({}))
     .catch((err) =>
       res.status(500).json({ message: "Database error", error: err })
     );
 };
 
-//detruire definitive un planning
-exports.destroyPlanning = (req, res) => {
-  let planningId = parseInt(req.params.id);
+//detruire definitive un step
+exports.destroyStep = (req, res) => {
+  let stepId = parseInt(req.params.id);
 
   //VERIFICATION SI LE CHAMP ID EST PRESENT ET COHERENT
-  if (!planningId) {
+  if (!stepId) {
     res.status(400).json({ message: "Missing parameter" });
   }
 
   //SUPRESSION DE L'UTILISATEUR
-  Planning.destroy({ where: { id: planningId }, force: true })
+  Step.destroy({ where: { id: stepId }, force: true })
     .then(() => res.status(204).json({}))
     .catch((err) =>
       res.status(500).json({ message: "Database error", error: err })

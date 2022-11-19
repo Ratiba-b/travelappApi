@@ -15,6 +15,31 @@ exports.getAllUsers = (req, res) => {
     );
 };
 
+// trouver les clients des users pro
+exports.findClientsbyUser = async (req, res) => {
+  let userId = parseInt(req.userId);
+
+  if (!userId) {
+    console.log("userId", req);
+    return res.status(400).json({ message: "Missing parameter" });
+  }
+
+  try {
+    let clients = await User.findAll({
+      where: { createdBy: userId },
+    });
+    if (clients === null) {
+      return res
+        .status(404)
+        .json({ message: "This professional has no clients" });
+    }
+    return res.json({ data: clients });
+  } catch (err) {
+    console.log("err clients", err);
+    res.status(500).json({ message: "Database error", error: err });
+  }
+};
+
 exports.getUser = async (req, res) => {
   let userId = parseInt(req.params.id);
 
@@ -89,10 +114,18 @@ exports.updateUser = async (req, res) => {
     if (user === null) {
       return res.status(404).json({ message: "This user does not exist" });
     }
+    let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
 
-    // MISE A JOUR DE L'UTILISATEUR
-    await User.update(req.body, { where: { id: userId } });
-    return res.json({ message: "User Updated" });
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        accessToken: null,
+        message: "Invalid Password!",
+      });
+    } else {
+      // MISE A JOUR DE L'UTILISATEUR
+      await User.update(req.body, { where: { id: userId } });
+      return res.json({ message: "User Updated" });
+    }
   } catch (err) {
     return res.status(500).json({ message: "Database error", error: err });
   }

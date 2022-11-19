@@ -21,14 +21,16 @@ let sequelize = new Sequelize(
 const db = {};
 db.sequelize = sequelize;
 db.User = require("../models/user.model")(sequelize);
-db.Cocktail = require("../models/cocktail.model")(sequelize);
+// db.Cocktail = require("../_ignoreFolder/models/cocktail.model")(sequelize);
 db.Travel = require("../models/travel.model")(sequelize);
 db.Planning = require("../models/planning.model")(sequelize);
 db.Todo = require("../models/todo.model")(sequelize);
 db.Role = require("../models/role.model")(sequelize);
-db.Event = require("../models/event.model")(sequelize);
+// db.Event = require("../models/event.model")(sequelize);
 db.Article = require("../models/article.model")(sequelize);
-db.Task = require("../models/task.model")(sequelize);
+// db.Task = require("../models/task.model")(sequelize);
+db.Step = require("../models/stepsTravel.model")(sequelize);
+
 // db.Picture = require("../models/picture.model")(sequelize);
 
 /**************************************/
@@ -43,10 +45,10 @@ db.User.belongsToMany(db.Role, {
   foreignKey: "userId",
   otherKey: "roleId",
 });
-db.User.hasMany(db.Cocktail, {
-  foreignKey: "user_id",
-  onDelete: "cascade",
-});
+// db.User.hasMany(db.Cocktail, {
+//   foreignKey: "user_id",
+//   onDelete: "cascade",
+// });
 db.User.hasMany(db.Travel, {
   foreignKey: "user_id",
   onDelete: "cascade",
@@ -56,10 +58,10 @@ db.User.hasMany(db.Article, {
   onDelete: "cascade",
 });
 
-db.Planning.hasMany(db.Event, {
-  foreignKey: "planning_id",
-  onDelete: "cascade",
-});
+// db.Planning.hasMany(db.Event, {
+//   foreignKey: "planning_id",
+//   onDelete: "cascade",
+// });
 
 // db.Todo.hasMany(db.Task, {
 //   foreignKey: "todo_id",
@@ -67,6 +69,10 @@ db.Planning.hasMany(db.Event, {
 // });
 
 db.Travel.hasMany(db.Planning, {
+  foreignKey: "travel_id",
+  onDelete: "cascade",
+});
+db.Travel.hasMany(db.Step, {
   foreignKey: "travel_id",
   onDelete: "cascade",
 });
@@ -79,16 +85,18 @@ db.Travel.hasMany(db.Todo, {
 //   onDelete: "cascade",
 // });
 
-db.Cocktail.belongsTo(db.User, { foreignKey: "user_id" });
+// db.Cocktail.belongsTo(db.User, { foreignKey: "user_id" });
 db.Travel.belongsTo(db.User, { foreignKey: "user_id" });
 db.Article.belongsTo(db.User, { foreignKey: "user_id" });
 db.Planning.belongsTo(db.Travel, { foreignKey: "travel_id" });
+db.Step.belongsTo(db.Travel, { foreignKey: "travel_id" });
 db.Todo.belongsTo(db.Travel, { foreignKey: "travel_id" });
-db.Event.belongsTo(db.Planning, { foreignKey: "planning_id" });
+// db.Event.belongsTo(db.Planning, { foreignKey: "planning_id" });
+
 // db.Task.belongsTo(db.Todo, { foreignKey: "todo_id" });
 // db.Picture.belongsTo(db.Article, { foreignKey: "article_id" });
 
-db.ROLES = ["user", "admin", "pro"];
+db.ROLES = ["user", "admin", "pro", "client"];
 // db.Travel.belongsTo(db.User, { foreignKey: "user_id" });
 // db.Travel.hasOne(db.Planning, db.User, { foreignKey: "travel_id" });
 // db.Planning.belongsTo(db.Travel, db.User, { foreignKey: "travel_id, user_id" });
@@ -121,5 +129,9 @@ db.ROLES = ["user", "admin", "pro"];
 //     id: 3,
 //     name: "admin",
 //   });
-//}
+//   Role.create({
+//     id: 4,
+//     name: "client",
+//   });
+// }
 module.exports = db;

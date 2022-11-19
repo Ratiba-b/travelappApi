@@ -34,7 +34,7 @@ router.use((req, res, next) => {
 router.get(
   "/",
   [authJwt.verifyToken, authJwt.isUserOrAdmin],
-  articleCtrl.getAllArticles
+  articleCtrl.findArticleByUser
 );
 router.get(
   "/:id",

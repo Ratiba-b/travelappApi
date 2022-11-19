@@ -2,6 +2,7 @@
 /** IMPORT DES MODULES */
 const DB = require("../config/db.config");
 const Article = DB.Article;
+const User = DB.User;
 
 /***********************************************/
 /** ROUTAGE DE LA RESSOURCE TODO */
@@ -12,7 +13,29 @@ exports.getAllArticles = (req, res) => {
       res.status(500).json({ message: "Database error", error: err })
     );
 };
+exports.findArticleByUser = async (req, res) => {
+  let userId = parseInt(req.userId);
+  console.log("userId", req);
 
+  if (!userId) {
+    console.log("userId", req);
+    return res.status(400).json({ message: "Missing parameter" });
+  }
+
+  try {
+    let article = await Article.findAll({
+      where: { user_Id: userId },
+      include: { model: User },
+    });
+    if (article === null) {
+      return res.status(404).json({ message: "This user has no articles" });
+    }
+    return res.json({ data: article });
+  } catch (err) {
+    console.log("err article", err);
+    res.status(500).json({ message: "Database error", error: err });
+  }
+};
 exports.getArticleById = async (req, res) => {
   let articleId = parseInt(req.params.id);
 
@@ -88,8 +111,9 @@ exports.addArticle = async (req, res) => {
 };
 
 exports.updateArticle = async (req, res) => {
-  console.log("req", req.params.id);
-  console.log("req", req.file);
+  console.log("req params.id", req.params.id);
+  console.log("req file", req.file);
+  console.log("req body", req.body);
   let articleId = parseInt(req.params.id);
 
   // VERIFICATION SI LE CHAMP ID ET COHERENT
@@ -105,7 +129,7 @@ exports.updateArticle = async (req, res) => {
     });
     // VERIFIER SI PLANNING EXISTE
     if (article === null) {
-      return res.status(404).json({ message: "This todo does not exist" });
+      return res.status(404).json({ message: "This article does not exist" });
     }
 
     // MISE A JOUR DU PLANNING
@@ -114,8 +138,14 @@ exports.updateArticle = async (req, res) => {
       title: req.body.title,
       location: req.body.location,
       description: req.body.description,
-      picture: req.file.filename,
+      picture: null,
     };
+    if (!req.file) {
+      data.picture = req.body.picture;
+    } else {
+      data.picture = req.file.filename;
+    }
+    console.log("data upadte", data);
     await Article.update(data, { where: { id: articleId } });
     return res.json({ message: "article Updated" });
   } catch (err) {

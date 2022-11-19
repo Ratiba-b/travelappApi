@@ -1,7 +1,7 @@
 /**********************************************/
 /** IMPORT DES MODULES */
 const express = require("express");
-const userCtrl = require("../controllers/user.controller");
+const stepCtrl = require("../controllers/step.controller");
 const { authJwt } = require("../Middlewares");
 
 /***********************************************/
@@ -21,39 +21,23 @@ router.use((req, res, next) => {
 });
 
 /***********************************************/
-/** ROUTAGE DE LA RESSOURCE USER */
-router.get(
-  "/",
-  [authJwt.verifyToken, authJwt.isPro],
-  userCtrl.findClientsbyUser
-);
+/** ROUTAGE DE LA RESSOURCE step */
+router.get("/", [authJwt.verifyToken], stepCtrl.getAllSteps);
 
-router.get("/:id", [authJwt.verifyToken], userCtrl.getUser);
+router.get("/:id", [authJwt.verifyToken], stepCtrl.getStepById);
 
-router.put("", userCtrl.addUser);
+router.put("", stepCtrl.addStep);
 
-router.patch("/:id", [authJwt.verifyToken], userCtrl.updateUser);
+router.patch("/:id", [authJwt.verifyToken], stepCtrl.updateStep);
 
-router.post(
-  "/untrash/:id",
-  [authJwt.verifyToken, authJwt.isPro],
-  userCtrl.untrashUser
-);
+router.post("/untrash/:id", [authJwt.verifyToken], stepCtrl.untrashStep);
 
 /************************* */
 /** METTRE A LA POUBELLE*/
-router.delete(
-  "/trash/:id",
-  [authJwt.verifyToken, authJwt.isPro],
-  userCtrl.trashUser
-);
+router.delete("/trash/:id", [authJwt.verifyToken], stepCtrl.trashStep);
 
 /************************************************* */
 /**SUPPRIMER DEFINITIVEMENT DE LA BASE DE DONNEES */
-router.delete(
-  "/:id",
-  [authJwt.verifyToken, authJwt.isPro],
-  userCtrl.deleteUser
-);
+router.delete("/:id", [authJwt.verifyToken], stepCtrl.destroyStep);
 
 module.exports = router;
